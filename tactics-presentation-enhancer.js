@@ -99,6 +99,7 @@ class MZTacticsPresentationEnhancer {
         document.querySelector("#tacticsDetailsId").textContent = this.tpeButtonTxt.off;
         this.applyOverlayStyles(false);
         this.isOverlayVisible = true;
+        this.adjustIfMobile()
     }
 
     cleanUp() {
@@ -207,8 +208,23 @@ class MZTacticsPresentationEnhancer {
         }).filter(Boolean);
     }
 
-    displayPlayerSkillsInOverlay(players, doc, formation, tacticsPlayers) {
+    adjustIfMobile() {
+        const playersDisplay = document.getElementById("players-display");
+        const tacticsBox = document.getElementById("tactics_box");
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+        if (isMobile) {
+            if (tacticsBox) {
+                tacticsBox.style.width = "auto";
+            }
+            if (playersDisplay) {
+                playersDisplay.style.removeProperty("float");
+            }
+        }
+    }
 
+    displayPlayerSkillsInOverlay(players, doc, formation, tacticsPlayers) {
+        
         this.applyOverlayStyles()
 
         const pitchWrapper = doc.getElementById("pitch-wrapper");
