@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         MZ - Player Training History
-// @namespace    douglaskampl
-// @version      7.2.1
-// @description  Provides player development/gains across previous MZ seasons (refactor: translations removed, CSS preserved)
-// @author       Douglas
+// @namespace    https://github.com/fatface007/mz-scripts
+// @version      1.0.0
+// @description  Fork/refactor of GreasyFork script 522149: custom CSS replaces an unavailable external stylesheet; external translations removed.
+// @author       fatface007
 // @match        https://www.managerzone.com/?p=players
 // @match        https://www.managerzone.com/?p=players&pid=*
 // @match        https://www.managerzone.com/?p=players&tid=*
@@ -16,7 +16,7 @@
 // @grant        GM_getResourceText
 // @require      https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js
 // @require      https://unpkg.com/vple/echarts.min.js
-// @resource     trainingHistoryStyles https://YOUR_HOST_HERE/Ayutthaya.css
+// @resource     trainingHistoryStyles https://raw.githubusercontent.com/fatface007/mz-scripts/refs/heads/master/training_history/Ayutthaya.css
 // @run-at       document-idle
 // @license      MIT
 // ==/UserScript==
