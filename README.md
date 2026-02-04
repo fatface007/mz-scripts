@@ -15,8 +15,8 @@
 ## Przykładowy zrzut ekranu
 Poniżej znajduje się przykład, jak skrypt wygląda w akcji:
 
-<p align="center">
-  <img src="./tpe_example.png" alt="Example Screenshot" width="60%">
+<p>
+  <img src="./tpe_example.png" alt="Example Screenshot" width="50%">
 </p>
 
 ## Problemy i sugestie

@@ -1,0 +1,1 @@
+https://greasyfork.org/pl/scripts/522149-mz-player-training-history/code

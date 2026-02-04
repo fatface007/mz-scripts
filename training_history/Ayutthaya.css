@@ -1,0 +1,573 @@
+/* ==========================================================================
+   MZ - Player Training History (replacement Ayutthaya.css)
+   Covers all selectors referenced by the script.
+   ========================================================================== */
+
+:root{
+  --th-bg: #0f1116;
+  --th-panel: #151925;
+  --th-panel-2: #1b2030;
+  --th-border: rgba(255,255,255,.08);
+  --th-text: #e7e9ef;
+  --th-muted: rgba(231,233,239,.72);
+  --th-accent: #6ea8fe;
+  --th-good: #57d38c;
+  --th-warn: #ffcc66;
+  --th-bad: #ff6b6b;
+}
+
+/* --- Overlay + modal ---------------------------------------------------- */
+.th-overlay{
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0,0,0,.58);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .14s ease;
+  z-index: 999999;
+}
+
+.th-overlay.show{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.th-modal{
+  width: min(1120px, 96vw);
+  max-height: 92vh;
+  overflow: auto;
+  background: var(--th-bg);
+  color: var(--th-text);
+  border: 1px solid var(--th-border);
+  border-radius: 14px;
+  box-shadow: 0 30px 90px rgba(0,0,0,.55);
+  transform: translateY(10px) scale(.99);
+  transition: transform .14s ease;
+  position: relative;
+}
+
+.th-modal.show{
+  transform: translateY(0) scale(1);
+}
+
+.th-modal-content{
+  padding: 16px 18px 18px;
+}
+
+.th-modal-close{
+  position: sticky;
+  top: 10px;
+  margin-left: auto;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 26px;
+  color: rgba(255,255,255,.75);
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--th-border);
+  border-radius: 10px;
+  float: right;
+  user-select: none;
+}
+.th-modal-close:hover{
+  background: rgba(255,255,255,.1);
+  color: #fff;
+}
+
+/* --- Title -------------------------------------------------------------- */
+.th-title{
+  margin: 0 0 12px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+/* --- Buttons ------------------------------------------------------------ */
+.th-btn,
+.th-action-btn,
+.th-pagination-btn,
+.th-pagination-toggle,
+.th-tab-btn{
+  border: 1px solid var(--th-border);
+  background: var(--th-panel);
+  color: var(--th-text);
+  border-radius: 12px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: filter .12s ease, background .12s ease, transform .06s ease;
+}
+
+.th-btn{
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+
+.th-btn:hover,
+.th-action-btn:hover,
+.th-pagination-btn:hover,
+.th-pagination-toggle:hover,
+.th-tab-btn:hover{
+  filter: brightness(1.15);
+}
+
+.th-btn:active,
+.th-action-btn:active,
+.th-pagination-btn:active,
+.th-pagination-toggle:active,
+.th-tab-btn:active{
+  transform: translateY(1px);
+}
+
+.th-pagination-btn:disabled{
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* --- Tabs --------------------------------------------------------------- */
+.th-tabs{
+  margin-top: 8px;
+}
+
+.th-tab-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.th-tab-buttons{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.th-tab-btn.active{
+  background: var(--th-panel-2);
+  border-color: rgba(110,168,254,.35);
+  box-shadow: 0 0 0 1px rgba(110,168,254,.18) inset;
+}
+
+.th-tab-content{
+  display: none;
+  margin-top: 12px;
+}
+
+.th-tab-content.active{
+  display: block;
+}
+
+/* --- Pagination controls ------------------------------------------------ */
+.th-pagination-controls{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.th-pagination-indicator{
+  color: var(--th-muted);
+  font-size: 13px;
+  padding: 0 6px;
+}
+
+/* --- States layout ------------------------------------------------------ */
+.th-state-wrapper{
+  display: block;
+}
+
+.th-state-col{
+  background: var(--th-panel);
+  border: 1px solid var(--th-border);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.th-state-col h4{
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.th-state-info{
+  color: var(--th-muted);
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+/* Two columns for Current State (JS injects two .th-state-skills blocks) */
+.th-state-skills{
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--th-border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 10px;
+}
+
+.th-state-skills h5{
+  margin: 0 0 10px;
+  color: rgba(255,255,255,.85);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.th-arrival-gains{
+  margin-top: 12px;
+}
+
+/* Skill rows */
+.th-state-skill{
+  display: grid;
+  grid-template-columns: 1.4fr 1fr .8fr;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(255,255,255,.08);
+}
+.th-state-skill:last-child{
+  border-bottom: 0;
+}
+
+.th-skill-name{
+  color: rgba(255,255,255,.92);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.th-skill-val{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-start;
+}
+.th-skill-val img{
+  height: 14px;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.th-skill-value-text{
+  color: var(--th-muted);
+  font-size: 12px;
+}
+
+.th-skill-value-text.th-skill-maxed{
+  color: var(--th-warn);
+  font-weight: 700;
+}
+
+.th-skill-change{
+  text-align: right;
+  font-size: 12px;
+  color: var(--th-muted);
+}
+
+.th-skill-increase{
+  color: var(--th-good);
+  font-weight: 700;
+}
+
+.th-skill-total-increase{
+  margin-top: 10px;
+  text-align: right;
+  color: var(--th-muted);
+  font-size: 12px;
+}
+.th-skill-total-increase span{
+  background: rgba(110,168,254,.12);
+  border: 1px solid rgba(110,168,254,.22);
+  padding: 6px 8px;
+  border-radius: 10px;
+}
+
+/* Arrival dots visualization */
+.th-arrival-skill-val{
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.th-initial-balls{
+  color: rgba(255,255,255,.35);
+  margin-right: 4px;
+}
+
+.th-gained-balls{
+  color: var(--th-accent);
+}
+
+.th-gain-since-arrival{
+  color: var(--th-accent);
+  font-weight: 700;
+}
+
+/* --- Scout info --------------------------------------------------------- */
+.th-scout-info{
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--th-panel);
+  border: 1px solid var(--th-border);
+  color: var(--th-muted);
+  font-size: 13px;
+}
+
+/* Training speed tags */
+.th-speed-s1, .th-speed-s2, .th-speed-s3, .th-speed-s4, .th-speed-s5{
+  font-weight: 700;
+}
+
+/* Potential highlighting (HP / LP) */
+.th-skill-potential-hp1, .th-skill-potential-hp2, .th-skill-potential-hp3, .th-skill-potential-hp4, .th-skill-potential-hp5{
+  color: #ffd166;
+}
+.th-skill-potential-lp1, .th-skill-potential-lp2, .th-skill-potential-lp3, .th-skill-potential-lp4, .th-skill-potential-lp5{
+  color: #9bf6ff;
+}
+
+.th-potential-icon{
+  opacity: .95;
+}
+
+/* --- Chips -------------------------------------------------------------- */
+.th-chips-list{
+  margin-top: 10px;
+  color: var(--th-muted);
+  font-size: 13px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.th-chip-display{
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--th-border);
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: rgba(255,255,255,.9);
+}
+
+.th-chip-icon{
+  width: 18px;
+  height: 18px;
+}
+
+.th-chip-icon-table{
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+.th-maxed-indicator{
+  color: var(--th-warn);
+  font-weight: 700;
+}
+
+/* --- Transfer info + currency dropdown ---------------------------------- */
+.th-transfer-info{
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.th-transfer-header{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,.9);
+  position: relative;
+}
+
+.th-transfer-currency-icon{
+  margin-left: auto;
+  cursor: pointer;
+  color: rgba(255,255,255,.7);
+}
+.th-transfer-currency-icon:hover{
+  color: #fff;
+}
+
+.th-transfer-currency-dropdown{
+  position: absolute;
+  right: 0;
+  top: 28px;
+  min-width: 160px;
+  background: var(--th-panel-2);
+  border: 1px solid var(--th-border);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  display: none;
+  z-index: 10;
+}
+
+.th-transfer-currency-dropdown.show{
+  display: block;
+}
+
+.th-transfer-currency-dropdown ul{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow: auto;
+}
+
+.th-transfer-currency-dropdown li{
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: rgba(255,255,255,.88);
+}
+
+.th-transfer-currency-dropdown li:hover{
+  background: rgba(255,255,255,.08);
+}
+
+.th-transfer-currency-dropdown li.selected{
+  background: rgba(110,168,254,.16);
+  border: 1px solid rgba(110,168,254,.25);
+}
+
+/* --- Evolution / Gains log --------------------------------------------- */
+.th-training-season{
+  background: var(--th-panel);
+  border: 1px solid var(--th-border);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.th-training-season h3{
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.th-training-season ul{
+  margin: 0;
+  padding-left: 18px;
+  color: var(--th-muted);
+}
+
+.th-training-final-summary{
+  margin: 12px 0 8px;
+  font-size: 14px;
+}
+
+.th-training-skilltotals{
+  margin: 0 0 12px;
+  color: var(--th-muted);
+  font-size: 13px;
+}
+
+/* --- Compare tab -------------------------------------------------------- */
+.th-compare-controls{
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+#th-compare-pids{
+  width: min(520px, 100%);
+  min-height: 74px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--th-panel);
+  border: 1px solid var(--th-border);
+  color: var(--th-text);
+  resize: vertical;
+}
+
+.th-compare-results-wrapper{
+  background: var(--th-panel);
+  border: 1px solid var(--th-border);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.th-compare-table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.th-compare-table th,
+.th-compare-table td{
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding: 8px 10px;
+  text-align: center;
+  color: rgba(255,255,255,.9);
+}
+
+.th-compare-table th:first-child,
+.th-compare-table td:first-child{
+  text-align: left;
+  color: rgba(255,255,255,.92);
+}
+
+.th-table-subheader{
+  color: var(--th-muted) !important;
+  font-size: 12px;
+}
+
+/* Chart area */
+.th-compare-graphical-results{
+  margin-top: 10px;
+}
+
+.th-chart-wrapper{
+  margin-top: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.03);
+  border-radius: 14px;
+  padding: 10px;
+  height: 360px; /* echarts container must have a height */
+}
+
+.th-chart-wrapper h3{
+  margin: 2px 0 8px;
+  font-size: 14px;
+  color: rgba(255,255,255,.9);
+}
+
+/* --- Errors / no data --------------------------------------------------- */
+.th-error-message{
+  background: rgba(255, 107, 107, .12);
+  border: 1px solid rgba(255, 107, 107, .25);
+  border-radius: 12px;
+  padding: 12px;
+  color: rgba(255,255,255,.92);
+}
+
+.th-no-data-message{
+  background: rgba(110,168,254,.10);
+  border: 1px solid rgba(110,168,254,.22);
+  border-radius: 12px;
+  padding: 12px;
+  color: rgba(255,255,255,.92);
+}
+
+/* --- Small screens ------------------------------------------------------ */
+@media (max-width: 720px){
+  .th-state-skill{
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 10px 0;
+  }
+  .th-skill-change{
+    text-align: left;
+  }
+}
