@@ -1,0 +1,920 @@
+/* ============================================================================
+   Training History (TH) - ManagerZone userscript
+   Compatible with DOM classes used in your script: th-*
+   Theme: dark navy + cyan accents (matches your prior mz-* scheme)
+============================================================================ */
+
+/* ---- Overlay + Modal shell ---- */
+.th-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 26, 47, 0.85);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 999999;
+}
+
+.th-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.th-modal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -55%) scale(0.95);
+  background: #1e2a45;
+  color: #dfe3f0;
+  border-radius: 16px;
+  max-width: 900px;
+  width: 92%;
+  height: auto;
+  max-height: 90%;
+  box-shadow:
+    10px 10px 30px rgba(10, 15, 35, 0.6),
+    -6px -6px 15px rgba(40, 60, 110, 0.2),
+    inset 2px 2px 4px rgba(40, 60, 110, 0.2);
+  box-sizing: border-box;
+  padding: 16px;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.th-modal.show {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.th-modal-content {
+  margin-top: 8px;
+  max-height: calc(90vh - 100px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(78, 175, 255, 0.5) rgba(15, 26, 47, 0.3);
+  padding-right: 12px;
+}
+
+/* WebKit scrollbar */
+.th-modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+.th-modal-content::-webkit-scrollbar-track {
+  background: rgba(15, 26, 47, 0.3);
+  border-radius: 3px;
+}
+.th-modal-content::-webkit-scrollbar-thumb {
+  background: rgba(78, 175, 255, 0.5);
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+.th-modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(78, 175, 255, 0.7);
+}
+
+.th-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: #4eafff;
+  background: #1e2a45;
+  border-radius: 50%;
+  transition: all 0.3s;
+  box-shadow:
+    4px 4px 8px rgba(10, 15, 35, 0.5),
+    -4px -4px 8px rgba(40, 60, 110, 0.2);
+  user-select: none;
+}
+
+.th-modal-close:hover {
+  color: #67e9fc;
+  box-shadow:
+    inset 3px 3px 6px rgba(10, 15, 35, 0.4),
+    inset -2px -2px 4px rgba(40, 60, 110, 0.1);
+  transform: scale(0.95);
+}
+
+/* ---- Title + Tabs ---- */
+.th-title {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #67e9fc;
+  text-shadow: 0 0 15px rgba(78, 175, 255, 0.3);
+  border-bottom: 2px solid rgba(78, 175, 255, 0.2);
+  padding-bottom: 8px;
+  font-family: "Bahnschrift", "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.th-tabs {
+  margin-top: 8px;
+}
+
+.th-tab-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.th-tab-buttons {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.th-tab-btn {
+  background: #1e2a45;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #c3c9e3;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow:
+    4px 4px 8px rgba(10, 15, 35, 0.5),
+    -3px -3px 6px rgba(40, 60, 110, 0.2);
+  white-space: nowrap;
+}
+
+.th-tab-btn:hover {
+  color: #4eafff;
+}
+
+.th-tab-btn.active {
+  color: #67e9fc;
+  box-shadow:
+    inset 3px 3px 6px rgba(10, 15, 35, 0.4),
+    inset -2px -2px 4px rgba(40, 60, 110, 0.1);
+}
+
+.th-tab-content {
+  display: none;
+}
+
+.th-tab-content.active {
+  display: block;
+}
+
+/* ---- Pagination controls ---- */
+.th-pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.th-pagination-btn {
+  background: #1e2a45;
+  color: #4eafff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow:
+    3px 3px 6px rgba(10, 15, 35, 0.5),
+    -2px -2px 4px rgba(40, 60, 110, 0.2);
+}
+
+.th-pagination-btn:hover:not(:disabled) {
+  color: #67e9fc;
+  transform: translateY(-2px);
+}
+
+.th-pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.th-pagination-indicator {
+  padding: 4px 6px;
+  color: #dfe3f0;
+  font-size: 13px;
+  min-width: 45px;
+  text-align: center;
+}
+
+.th-pagination-toggle {
+  background: #304368;
+  color: #dfe3f0;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  margin-left: 6px;
+  transition: all 0.2s;
+  box-shadow:
+    3px 3px 6px rgba(10, 15, 35, 0.5),
+    -2px -2px 4px rgba(40, 60, 110, 0.2);
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+.th-pagination-toggle:hover {
+  background: #3a5180;
+  transform: translateY(-2px);
+}
+
+/* ---- The button inserted near players (script inserts .th-btn) ---- */
+.th-btn {
+  background: #1e2a45;
+  color: #4eafff;
+  border: none;
+  border-radius: 10px;
+  padding: 4px 8px;
+  margin: 2px 0 2px 5px;
+  cursor: pointer;
+  font-size: 10px;
+  line-height: 1;
+  vertical-align: middle;
+  transition: all 0.2s ease-in-out;
+  box-shadow:
+    3px 3px 6px rgba(10, 15, 35, 0.5),
+    -2px -2px 5px rgba(40, 60, 110, 0.2);
+}
+
+.th-btn:hover {
+  color: #67e9fc;
+  transform: translateY(-2px);
+  box-shadow:
+    4px 4px 8px rgba(10, 15, 35, 0.5),
+    -2px -2px 5px rgba(40, 60, 110, 0.2);
+}
+
+.th-btn:active {
+  transform: translateY(0);
+  box-shadow:
+    inset 3px 3px 6px rgba(10, 15, 35, 0.4),
+    inset -2px -2px 4px rgba(40, 60, 110, 0.1);
+}
+
+.th-btn i {
+  vertical-align: middle;
+}
+
+/* ---- Scout info badges ---- */
+.th-scout-info {
+  margin-bottom: 10px;
+  padding: 5px 8px;
+  background-color: #172135;
+  border-radius: 8px;
+  font-size: 0.9em;
+  text-align: center;
+  box-shadow:
+    inset 2px 2px 4px rgba(10, 15, 35, 0.3),
+    inset -1px -1px 2px rgba(40, 60, 110, 0.1);
+}
+
+.th-scout-info > span {
+  font-weight: bold;
+  padding: 3px 6px;
+  border-radius: 5px;
+  margin: 0 4px;
+  display: inline-block;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* speed/hp/lp classes are used by your script */
+.th-speed-s1 { background-color: #E74C3C; color: #FFFFFF; }
+.th-speed-s2 { background-color: #F39C12; color: #000000; }
+.th-speed-s3 { background-color: #F1C40F; color: #000000; }
+.th-speed-s4 { background-color: #2ECC71; color: #000000; }
+
+.th-hp-h2 { background-color: #E67E22; color: #FFFFFF; }
+.th-hp-h3 { background-color: #F1C40F; color: #000000; text-shadow: 0 0 1px rgba(0,0,0,0.5); font-weight: bold; border: 1px solid rgba(0,0,0,0.2); }
+.th-hp-h4 { background-color: #2ECC71; color: #000000; text-shadow: 0 0 1px rgba(0,0,0,0.5); font-weight: bold; }
+
+.th-lp-l1 { background-color: #E74C3C; color: #FFFFFF; }
+.th-lp-l2 { background-color: #9B59B6; color: #FFFFFF; }
+
+/* ---- State layout ---- */
+.th-state-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: #172135;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow:
+    inset 3px 3px 6px rgba(10, 15, 35, 0.3),
+    inset -2px -2px 4px rgba(40, 60, 110, 0.1);
+}
+
+.th-state-col {
+  flex: 1;
+  min-width: 240px;
+  padding: 12px;
+  background: #1e2a45;
+  border-radius: 12px;
+  margin-bottom: 0;
+  box-shadow:
+    6px 6px 12px rgba(10, 15, 35, 0.4),
+    -4px -4px 8px rgba(40, 60, 110, 0.2);
+}
+
+.th-state-col h4 {
+  color: #4eafff;
+  margin: 0 0 10px 0;
+  font-size: 15px;
+  text-shadow: 0 0 10px rgba(78, 175, 255, 0.2);
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(78, 175, 255, 0.15);
+}
+
+.th-state-info {
+  margin-bottom: 12px;
+  color: #c3c9e3;
+  font-size: 13px;
+}
+
+.th-state-info strong {
+  color: #ff9c67;
+}
+
+/* ---- Skills boxes ---- */
+.th-state-skills {
+  padding: 8px;
+  background: #172135;
+  border-radius: 10px;
+  box-shadow:
+    inset 3px 3px 6px rgba(10, 15, 35, 0.3),
+    inset -2px -2px 4px rgba(40, 60, 110, 0.1);
+  margin-bottom: 10px;
+}
+
+.th-state-skills h5 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: #a0b0e0;
+  font-weight: 500;
+  text-align: center;
+  padding-bottom: 4px;
+  border-bottom: 1px dotted rgba(78, 175, 255, 0.2);
+}
+
+.th-arrival-gains {
+  margin-top: 15px;
+}
+
+/* Each skill row */
+.th-state-skill {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  background: #1e2a45;
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow:
+    2px 2px 4px rgba(10, 15, 35, 0.3),
+    -1px -1px 3px rgba(40, 60, 110, 0.1);
+}
+
+/* skill name / potential icon */
+.th-skill-name {
+  font-size: 13px;
+  color: #67e9fc;
+  flex: 1;
+  margin-right: 5px;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+.th-skill-name strong { font-weight: 600; }
+
+.th-potential-icon {
+  font-size: 0.8em;
+  margin-right: 5px;
+  opacity: 0.8;
+}
+
+/* Potential icon colors */
+.th-potential-icon-hp4 { color: #2ECC71; }
+.th-potential-icon-hp3 { color: #F1C40F; }
+.th-potential-icon-hp2 { color: #E67E22; }
+.th-potential-icon-lp2 { color: #9B59B6; }
+.th-potential-icon-lp1 { color: #E74C3C; }
+
+/* Potential highlighting (row-level) */
+.th-skill-potential-hp4 { background-color: rgba(46, 204, 113, 0.10); }
+.th-skill-potential-hp3 { background-color: rgba(241, 196, 15, 0.10); }
+.th-skill-potential-hp2 { background-color: rgba(230, 126, 34, 0.10); }
+.th-skill-potential-lp2 { background-color: rgba(155, 89, 182, 0.10); }
+.th-skill-potential-lp1 { background-color: rgba(231, 76, 60, 0.10); }
+
+/* Optional: name tint when skill is one of potential skills (script adds th-skill-potential-... to th-skill-name) */
+.th-skill-name.th-skill-potential-hp4 strong { color: #2ECC71; }
+.th-skill-name.th-skill-potential-hp3 strong { color: #F1C40F; }
+.th-skill-name.th-skill-potential-hp2 strong { color: #E67E22; }
+.th-skill-name.th-skill-potential-lp2 strong { color: #9B59B6; }
+.th-skill-name.th-skill-potential-lp1 strong { color: #E74C3C; }
+
+/* value column */
+.th-skill-val {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  color: #c3c9e3;
+  flex-shrink: 0;
+  min-height: 1.5em;
+  min-width: 70px;
+}
+
+.th-arrival-skill-val {
+  gap: 1px;
+  justify-content: flex-start;
+  min-width: auto;
+}
+
+.th-skill-val img {
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.th-skill-value-text {
+  white-space: nowrap;
+  font-size: 0.95em;
+}
+
+.th-initial-balls,
+.th-gained-balls {
+  font-size: 1.6em;
+  line-height: 1;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.th-initial-balls { color: #dfe3f0; }
+.th-gained-balls { color: #2ECC71; }
+
+.th-skill-change {
+  margin-left: auto;
+  min-width: 40px;
+  text-align: right;
+  padding-left: 8px;
+  flex-shrink: 0;
+}
+
+.th-skill-increase {
+  color: #F1C40F;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.th-gain-since-arrival {
+  color: #2ECC71;
+  font-size: 0.9em;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(46, 204, 113, 0.3);
+}
+
+.th-skill-total-increase {
+  text-align: right;
+  margin-top: 12px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(78, 175, 255, 0.2);
+}
+
+.th-skill-total-increase span {
+  color: #90EE90;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* “maxed” visual class your JS adds to the value text: th-skill-maxed */
+.th-skill-value-text.th-skill-maxed {
+  color: rgba(255, 80, 80, 0.9);
+  font-style: italic;
+  text-shadow: 0 0 6px rgba(255, 80, 80, 0.25);
+}
+
+/* ---- Transfer info + dropdown ---- */
+.th-transfer-info {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background-color: #2a3b5a;
+  border: 1px solid rgba(78, 175, 255, 0.1);
+  border-radius: 8px;
+  font-size: 0.85em;
+  box-shadow: inset 2px 2px 4px rgba(10, 15, 35, 0.2);
+  position: relative;
+}
+
+.th-transfer-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #4eafff;
+  position: relative;
+}
+
+.th-transfer-currency-icon {
+  cursor: pointer;
+  margin-left: 6px;
+  font-size: 0.9em;
+  opacity: 0.8;
+  transition: all 0.2s;
+  color: #4eafff;
+}
+
+.th-transfer-currency-icon:hover {
+  opacity: 1;
+  color: #67e9fc;
+  transform: rotate(30deg);
+}
+
+.th-transfer-currency-dropdown {
+  position: absolute;
+  background: #1e2a45;
+  border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+  display: none;
+  right: 0;
+  min-width: 70px;
+}
+
+.th-transfer-currency-dropdown.show {
+  display: block;
+}
+
+.th-transfer-currency-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.th-transfer-currency-dropdown li {
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  color: #dfe3f0;
+  margin: 0;
+}
+
+.th-transfer-currency-dropdown li:hover {
+  background: #304368;
+}
+
+.th-transfer-currency-dropdown li.selected {
+  background: #4eafff;
+  color: #fff;
+}
+
+.th-transfer-info ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+.th-transfer-info li {
+  margin-bottom: 4px;
+  line-height: 1.3;
+  color: #b0b8d0;
+}
+
+.th-transfer-info li i {
+  margin: 0 5px;
+  color: #4eafff;
+}
+
+/* ---- Chips display ---- */
+.th-chips-list {
+  font-size: 0.9em;
+  color: #99aacc;
+  margin-top: 8px;
+  padding: 6px 10px;
+  background-color: #172135;
+  border: 1px dashed rgba(78, 175, 255, 0.2);
+  border-radius: 6px;
+}
+
+.th-chip-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px;
+  margin: 0 4px 4px 0;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(78, 175, 255, 0.12);
+  border-radius: 999px;
+}
+
+.th-chip-icon {
+  width: 16px;
+  height: 16px;
+  image-rendering: -webkit-optimize-contrast;
+}
+.th-chip-icon-table {
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+  margin-left: 3px;
+}
+
+.th-all-chips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.th-all-chips-list li {
+  margin-bottom: 6px;
+  padding: 6px 8px;
+  background: #172135;
+  border-radius: 6px;
+  font-size: 0.9em;
+}
+
+/* ---- Evolution list ---- */
+.th-training-season {
+  margin-bottom: 16px;
+  background: #1e2a45;
+  border-radius: 12px;
+  padding: 12px;
+  transition: all 0.2s;
+  box-shadow:
+    6px 6px 12px rgba(10, 15, 35, 0.4),
+    -4px -4px 8px rgba(40, 60, 110, 0.2);
+}
+
+.th-training-season:hover {
+  transform: translateX(4px);
+  box-shadow:
+    8px 8px 16px rgba(10, 15, 35, 0.4),
+    -4px -4px 8px rgba(40, 60, 110, 0.2);
+}
+
+.th-training-season h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #67e9fc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-shadow: 0 0 10px rgba(103, 233, 252, 0.2);
+}
+
+.th-training-season ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.th-training-season li {
+  margin-bottom: 6px;
+  padding: 8px 10px;
+  background: #172135;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+  box-shadow:
+    inset 3px 3px 6px rgba(10, 15, 35, 0.3),
+    inset -2px -2px 4px rgba(40, 60, 110, 0.1);
+}
+
+.th-training-season li strong {
+  color: #ff9c67;
+  margin-right: 12px;
+  font-weight: 500;
+}
+
+.th-training-season li:hover {
+  box-shadow:
+    inset 4px 4px 8px rgba(10, 15, 35, 0.4),
+    inset -2px -2px 4px rgba(40, 60, 110, 0.1);
+}
+
+.th-maxed-indicator {
+  margin-left: 8px;
+  color: rgba(255, 80, 80, 0.95);
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+/* Summary */
+.th-training-final-summary {
+  margin: 18px 0 12px;
+  padding: 14px;
+  background: #1e2a45;
+  border-radius: 12px;
+  font-size: 16px;
+  color: #4eafff;
+  text-align: center;
+  box-shadow:
+    6px 6px 12px rgba(10, 15, 35, 0.4),
+    -4px -4px 8px rgba(40, 60, 110, 0.2);
+  text-shadow: 0 0 10px rgba(78, 175, 255, 0.3);
+}
+
+.th-training-skilltotals {
+  color: #c3c9e3;
+  text-align: center;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.5;
+  padding: 0 10px;
+}
+
+/* ---- Compare tab ---- */
+.th-compare-controls {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+#th-compare-pids {
+  flex: 1;
+  min-width: 260px;
+  min-height: 64px;
+  resize: vertical;
+  border-radius: 10px;
+  border: 1px solid rgba(78, 175, 255, 0.18);
+  background: #172135;
+  color: #dfe3f0;
+  padding: 10px;
+  box-shadow: inset 2px 2px 4px rgba(10, 15, 35, 0.25);
+  outline: none;
+}
+
+#th-compare-pids:focus {
+  border-color: rgba(103, 233, 252, 0.35);
+}
+
+.th-action-btn {
+  background: #1e2a45;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #4eafff;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow:
+    4px 4px 8px rgba(10, 15, 35, 0.5),
+    -3px -3px 6px rgba(40, 60, 110, 0.2);
+}
+
+.th-action-btn:hover {
+  color: #67e9fc;
+  transform: translateY(-2px);
+}
+
+.th-compare-results-wrapper {
+  background: #172135;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow:
+    inset 3px 3px 6px rgba(10, 15, 35, 0.3),
+    inset -2px -2px 4px rgba(40, 60, 110, 0.1);
+}
+
+.th-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #1e2a45;
+  box-shadow:
+    6px 6px 12px rgba(10, 15, 35, 0.4),
+    -4px -4px 8px rgba(40, 60, 110, 0.2);
+}
+
+.th-compare-table th,
+.th-compare-table td {
+  border-bottom: 1px solid rgba(78, 175, 255, 0.12);
+  padding: 8px 10px;
+  text-align: center;
+  color: #dfe3f0;
+}
+
+.th-compare-table thead th {
+  color: #67e9fc;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.th-table-subheader {
+  font-size: 12px;
+  color: #c3c9e3;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.th-compare-graphical-results {
+  margin-top: 12px;
+}
+
+.th-chart-wrapper {
+  background: #1e2a45;
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 12px;
+  box-shadow:
+    6px 6px 12px rgba(10, 15, 35, 0.4),
+    -4px -4px 8px rgba(40, 60, 110, 0.2);
+  height: 360px;
+}
+
+.th-chart-wrapper h3 {
+  margin: 0 0 8px 0;
+  color: #67e9fc;
+  font-size: 14px;
+}
+
+/* ---- Generic messages ---- */
+.th-error-message,
+.th-no-data-message {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(78, 175, 255, 0.12);
+  color: #dfe3f0;
+}
+
+.th-error-message p,
+.th-no-data-message p {
+  margin: 0;
+}
+
+/* ---- Responsive ---- */
+@media screen and (max-width: 720px) {
+  .th-tab-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .th-pagination-controls {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .th-modal-content {
+    max-height: calc(85vh - 90px);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .th-state-col {
+    min-width: 100%;
+  }
+
+  .th-title {
+    font-size: 20px;
+  }
+
+  .th-tab-btn,
+  .th-pagination-btn,
+  .th-pagination-toggle {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .th-skill-val {
+    min-width: auto;
+    flex-shrink: 1;
+    flex-grow: 1;
+    gap: 2px;
+  }
+
+  .th-skill-change {
+    min-width: auto;
+    padding-left: 4px;
+    flex-shrink: 0;
+  }
+
+  .th-initial-balls,
+  .th-gained-balls {
+    font-size: 1.6em;
+  }
+}
